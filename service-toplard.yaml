@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: toplard
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: toplard
+  template:
+    metadata:
+      labels:
+        app: toplard
+    spec:
+      containers:
+      - name: toplard
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: toplard
+spec:
+  selector:
+    app: toplard
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP 
