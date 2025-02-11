@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: toplard
-        image: nginx:latest
+        image: dontrebootme/microbot:v1
+#        image: nginx:latest
         ports:
         - containerPort: 80
 --- 

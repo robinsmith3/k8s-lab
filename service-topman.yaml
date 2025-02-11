@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: topman
-        image: nginx:latest
+        image: dontrebootme/microbot:v1
+#        image: nginx:latest
         ports:
         - containerPort: 80
 --- 
