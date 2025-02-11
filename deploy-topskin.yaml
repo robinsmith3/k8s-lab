@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: topskin
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: topskin
+  template:
+    metadata:
+      labels:
+        app: topskin
+    spec:
+      containers:
+      - name: topskin
+        image: dontrebootme/microbot:v1
+#        image: nginx:latest
+        ports:
+        - containerPort: 80

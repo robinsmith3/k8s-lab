@@ -25,7 +25,7 @@ spec:
     - host: toplard.servebeer.com
       http:
         paths:
-          - pathType: Exact
+          - pathType: Prefix
             path: /
             backend:
               service:
@@ -35,7 +35,7 @@ spec:
     - host: topman.servebeer.com
       http:
         paths:
-          - pathType: Exact
+          - pathType: Prefix
             path: /
             backend:
               service:
@@ -45,7 +45,7 @@ spec:
     - host: topskin.servebeer.com
       http:
         paths:
-          - pathType: Exact
+          - pathType: Prefix
             path: /
             backend:
               service:
