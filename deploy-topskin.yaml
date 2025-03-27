@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: topskin
-        image: dontrebootme/microbot:v3
+        image: dontrebootme/microbot:v1
         ports:
         - containerPort: 80
