@@ -40,9 +40,13 @@ docker build -t my-flask-api:latest .
 docker run -p 5000:5000 my-flask-api:latest
 
 ## Add a proper Postgres database backend
+- adapt our Flask API to use a proper database backend instead of the basic _in-memory_ items list we have now
+- use PostgreSQL as the database since it’s widely used, reliable, and pairs well with Kubernetes
+- integrate it into the MicroK8s setup
+- update the Flask app to use SQLAlchemy (an ORM for Python), and adjust the deployment accordingly
 
 ## Add production level security
-- we allready have TLS and k8s secrets running well
+- we allready have TLS and k8s secrets running well on Ingress
 - we also have the domain running behind Cloudflare CDN with DDoS and rudimentary attack protection
 - there is not API protection per se
 - and its not yet clear how much more protection is required for a typical prod level service 
