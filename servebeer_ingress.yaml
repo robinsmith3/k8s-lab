@@ -58,3 +58,10 @@ spec:
                 name: topskin
                 port:
                   number: 80
+          - pathType: Prefix
+            path: /api
+            backend:
+              service:
+              name: flask-api-service
+              port:
+                number: 80

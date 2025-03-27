@@ -32,7 +32,7 @@ Uses k8s, nginx ingress, nginx, _flask_, gunicon
 
 ## Docker
 
-image at : toplard/my-flask-apigi pull
+image at : toplard/my-flask-api
  
 ### Build the image
 docker build -t my-flask-api:latest .
