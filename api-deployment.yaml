@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: flask-api
-        image: toplard/my-flask-api  # Your Docker image
+        image: toplard/my-flask-api:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

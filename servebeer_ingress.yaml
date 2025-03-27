@@ -51,17 +51,17 @@ spec:
     - host: topskin.servebeer.com
       http:
         paths:
-          - pathType: Prefix
-            path: /
+          - path: /
+            pathType: Prefix
             backend:
               service:
                 name: topskin
                 port:
                   number: 80
-          - pathType: Prefix
-            path: /api
+          - path: /api
+            pathType: Prefix
             backend:
               service:
-              name: flask-api-service
-              port:
-                number: 80
+                name: flask-api-service
+                port:
+                  number: 80
