@@ -38,3 +38,11 @@ image at : toplard/my-flask-api
 docker build -t my-flask-api:latest .
 ### Test it locally
 docker run -p 5000:5000 my-flask-api:latest
+
+## Add a proper Postgres database backend
+
+## Add production level security
+- we allready have TLS and k8s secrets running well
+- we also have the domain running behind Cloudflare CDN with DDoS and rudimentary attack protection
+- there is not API protection per se
+- and its not yet clear how much more protection is required for a typical prod level service 
