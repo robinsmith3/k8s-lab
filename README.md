@@ -32,12 +32,9 @@ Uses k8s, nginx ingress, nginx, _flask_, gunicon
 
 ## Docker
 
-image at : toplard/my-flask-api
+image at : toplard/my-flask-apigi pull
  
 ### Build the image
 docker build -t my-flask-api:latest .
 ### Test it locally
 docker run -p 5000:5000 my-flask-api:latest
-
-
-
