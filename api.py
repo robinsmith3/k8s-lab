@@ -14,7 +14,7 @@ db = SQLAlchemy(app)
 
 class Item(db.Model):
     __tablename__ = 'items'
-    __table_args__ = {'schema': 'public'}  # Explicitly set schema
+    __table_args__ = {'schema': 'public'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
 
@@ -28,14 +28,9 @@ def init_db():
         try:
             with app.app_context():
                 logger.info("Attempting to create tables")
-                # Verify current database
-                current_db = db.session.execute("SELECT current_database()").scalar()
-                logger.info(f"Current database: {current_db}")
                 db.create_all()
                 inspector = db.inspect(db.engine)
-                schemas = inspector.get_schema_names()
                 tables = inspector.get_table_names(schema='public')
-                logger.info(f"Schemas in DB: {schemas}")
                 logger.info(f"Tables in public schema: {tables}")
                 if 'items' in tables:
                     logger.info("Tables created successfully")
@@ -55,7 +50,17 @@ logger.info("After init_db")
 @app.route('/api/items', methods=['GET'])
 def get_items():
     items = Item.query.all()
-    return jsonify({"items": [item.to_dict() for item in items]}), 200
+    return jsonify({
+        "message": "List of available items",
+        "items": [item.to_dict() for item in items]
+    }), 200
+
+@app.route('/api/items/<int:item_id>', methods=['GET'])
+def get_item(item_id):
+    item = Item.query.get(item_id)
+    if item:
+        return jsonify({"item": item.to_dict()}), 200
+    return jsonify({"error": "Item not found"}), 404
 
 @app.route('/api/items', methods=['POST'])
 def add_item():
@@ -66,6 +71,20 @@ def add_item():
     db.session.add(new_item)
     db.session.commit()
     return jsonify({"item": new_item.to_dict()}), 201
+
+@app.route('/api/items/<int:item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    item = Item.query.get(item_id)
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+        return jsonify({
+            "message": f"Item {item_id} deleted successfully. Use GET /api/items to see the updated list."
+        }), 200
+    return jsonify({
+        "error": "Item not found",
+        "hint": "Use GET /api/items to see available items first."
+    }), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
