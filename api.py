@@ -1,53 +1,24 @@
-import os
 from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-import time
 
 app = Flask(__name__)
 
-# Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://api_user:securepassword123@postgres-service:5432/flask_api_db')
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://api_user:securepassword123@postgres-service:5432/flask_api_db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-# Retry database connection and table creation
-def init_db():
-    for _ in range(5):  # Retry 5 times
-        try:
-            with app.app_context():
-                db.create_all()
-                print("Tables created successfully")
-            break
-        except Exception as e:
-            print(f"Failed to connect to DB: {e}")
-            time.sleep(5)  # Wait 5 seconds before retrying
-    else:
-        raise Exception("Could not initialize database after retries")
-
-init_db()  # Call it here, after app and db setup, before routes
-
-# Define the Item model
-class Item(db.Model):
-    __tablename__ = 'items'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-
-    def to_dict(self):
-        return {"id": self.id, "name": self.name}
+# Sample data (pretend this is a database)
+items = [
+    {"id": 1, "name": "Item 1"},
+    {"id": 2, "name": "Item 2"}
+]
 
 # GET all items
 @app.route('/api/items', methods=['GET'])
 def get_items():
-    items = Item.query.all()
-    return jsonify({"items": [item.to_dict() for item in items]}), 200
+    return jsonify({"items": items}), 200
 
 # GET a single item by ID
 @app.route('/api/items/<int:item_id>', methods=['GET'])
 def get_item(item_id):
-    item = Item.query.get(item_id)
+    item = next((item for item in items if item["id"] == item_id), None)
     if item:
-        return jsonify({"item": item.to_dict()}), 200
+        return jsonify({"item": item}), 200
     return jsonify({"error": "Item not found"}), 404
 
 # POST to add a new item
@@ -56,20 +27,10 @@ def add_item():
     data = request.get_json()
     if not data or "name" not in data:
         return jsonify({"error": "Name is required"}), 400
-    new_item = Item(name=data["name"])
-    db.session.add(new_item)
-    db.session.commit()
-    return jsonify({"item": new_item.to_dict()}), 201
-
-# Handle /api specifically
-@app.route('/api', methods=['GET'])
-def api_root():
-    return jsonify({"message": "Welcome to the API. Use /api/items to access resources."}), 200
-
-# Catch-all for undefined routes
-@app.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def catch_all(path):
-    return jsonify({"error": "Not found. Try /api/items instead."}), 404
+    new_id = max(item["id"] for item in items) + 1 if items else 1
+    new_item = {"id": new_id, "name": data["name"]}
+    items.append(new_item)
+    return jsonify({"item": new_item}), 201
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='127.0.0.1', port=5000)

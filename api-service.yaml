@@ -8,6 +8,6 @@ spec:
     app: flask-api
   ports:
   - protocol: TCP
-    port: 80
-    targetPort: 5000
-  type: ClusterIP
+    port: 80  # External port
+    targetPort: 5000  # Container port
+  type: ClusterIP  # Internal service

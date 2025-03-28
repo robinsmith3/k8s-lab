@@ -4,7 +4,7 @@ metadata:
   name: flask-api
   namespace: default
 spec:
-  replicas: 2
+  replicas: 2  # Run 2 pods for redundancy
   selector:
     matchLabels:
       app: flask-api
@@ -15,10 +15,7 @@ spec:
     spec:
       containers:
       - name: flask-api
-        image: toplard/my-flask-api:latest
-        imagePullPolicy: Always
+        image: toplard/my-flask-api:latest  # Use your image name
+        imagePullPolicy: Always  # Use local image
         ports:
         - containerPort: 5000
-        env:
-        - name: DATABASE_URL
-          value: "postgresql://api_user:securepassword123@postgres-service:5432/flask_api_db"
