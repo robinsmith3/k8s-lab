@@ -23,6 +23,7 @@ Uses k8s, nginx ingress, nginx, _flask_, gunicon
 
 ### Caveats
 - need to add path to gunicorn bin, export from .zprofile(on a Macbook): PATH="$PATH:/Users/robinsmith/Library/Python/3.9/bin"
+- notice when using the basic _in memory_ list database there are 2 pods active, and this means the db will get out of step across both
 
 ### For testing
 - flag web requests during testing: gunicorn --access-logfile - --bind 127.0.0.1:5000 api:app
@@ -44,6 +45,10 @@ docker run -p 5000:5000 my-flask-api:latest
 - use PostgreSQL as the database since it’s widely used, reliable, and pairs well with Kubernetes
 - integrate it into the MicroK8s setup
 - update the Flask app to use SQLAlchemy (an ORM for Python), and adjust the deployment accordingly
+
+### Caveats
+- ask Grok to place postgres pwd into secrets
+- ditto for Temporary storage; ask to adapt to use PersistentVolume for production
 
 ## Add production level security
 - we allready have TLS and k8s secrets running well on Ingress

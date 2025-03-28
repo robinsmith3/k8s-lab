@@ -16,6 +16,8 @@ metadata:
      # # SecAuditLogParts ABIJDEFHZ
      # SecAuditLog /var/log/modsec_audit.log
      # Include /etc/nginx/owasp-modsecurity-crs/nginx-modsecurity.conf
+    # add a catchall to direct dangerous looking paths
+    nginx.ingress.kubernetes.io/default-backend: custom-error-service
 spec:
   tls:
     - hosts:

@@ -19,6 +19,3 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
-        env:
-        - name: DATABASE_URL
-          value: "postgresql://api_user:securepassword123@postgres-service:5432/flask_api_db"
