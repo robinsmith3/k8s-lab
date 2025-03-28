@@ -16,7 +16,7 @@ spec:
       containers:
       - name: flask-api
         image: toplard/my-flask-api:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
         env:

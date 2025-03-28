@@ -1,16 +1,33 @@
 import os
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+import time
 
 app = Flask(__name__)
 
 # Database configuration
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://api_user:securepassword123@postgres-service:5432/flask_api_db'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://api_user:securepassword123@postgres-service:5432/flask_api_db')
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://api_user:securepassword123@postgres-service:5432/flask_api_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Item model
+# Retry database connection and table creation
+def init_db():
+    for _ in range(5):  # Retry 5 times
+        try:
+            with app.app_context():
+                db.create_all()
+                print("Tables created successfully")
+            break
+        except Exception as e:
+            print(f"Failed to connect to DB: {e}")
+            time.sleep(5)  # Wait 5 seconds before retrying
+    else:
+        raise Exception("Could not initialize database after retries")
+
+init_db()  # Call it here, after app and db setup, before routes
+
+# Define the Item model
 class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key=True)
@@ -18,9 +35,6 @@ class Item(db.Model):
 
     def to_dict(self):
         return {"id": self.id, "name": self.name}
-
-with app.app_context():
-    db.create_all()
 
 # GET all items
 @app.route('/api/items', methods=['GET'])
