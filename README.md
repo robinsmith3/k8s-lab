@@ -19,7 +19,7 @@ Create a simple API on nginx with simple backend on k8s for demos
 https://x.com/i/grok/share/d3CSEtNoHPjIjE4HvwnyvZmkE
 
 ## Requirements
-Uses k8s, nginx ingress, nginx, _flask_, gunicon
+Uses k8s, nginx ingress, nginx, _flask_, gunicon, postgres
 
 ### Caveats
 - need to add path to gunicorn bin, export from .zprofile(on a Macbook): PATH="$PATH:/Users/robinsmith/Library/Python/3.9/bin"
@@ -33,22 +33,13 @@ Uses k8s, nginx ingress, nginx, _flask_, gunicon
 
 ## Docker
 
-image at : toplard/my-flask-api
+image at : toplard/my-flask-api:latest
  
-### Build the image
-docker build -t my-flask-api:latest .
-### Test it locally
-docker run -p 5000:5000 my-flask-api:latest
-
 ## Add a proper Postgres database backend
-- adapt our Flask API to use a proper database backend instead of the basic _in-memory_ items list we have now
-- use PostgreSQL as the database since it’s widely used, reliable, and pairs well with Kubernetes
-- integrate it into the MicroK8s setup
-- update the Flask app to use SQLAlchemy (an ORM for Python), and adjust the deployment accordingly
+- adapt our Flask API to use a proper database backend instead of the basic _in-memory_ items list 
 
 ### Caveats
 - ask Grok to place postgres pwd into secrets
-- ditto for Temporary storage; ask to adapt to use PersistentVolume for production
 
 ## Add production level security
 - we allready have TLS and k8s secrets running well on Ingress
