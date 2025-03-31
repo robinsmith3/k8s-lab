@@ -5,8 +5,8 @@ metadata:
   namespace: default
 spec:
   accessModes:
-    - ReadWriteOnce  # Single pod can read/write
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi  # 1GB of storage
-  storageClassName: microk8s-hostpath
+      storage: 1Gi
+  storageClassName: local-storage
