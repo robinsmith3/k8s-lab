@@ -17,14 +17,16 @@ class Item(db.Model):
     __table_args__ = {'schema': 'public'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    secret_note = db.Column(db.String(200), nullable=True, default='hidden_secret')
+    owner_id = db.Column(db.Integer, nullable=True)  # Simulates user ownership
 
     def to_dict(self):
-        return {"id": self.id, "name": self.name}
+        return {"id": self.id, "name": self.name}  # Excludes secret_note and owner_id for regular endpoints
 
 def init_db():
     logger.info("Starting init_db")
     logger.info(f"Connecting to: {app.config['SQLALCHEMY_DATABASE_URI']}")
-    for _ in range(5):
+    for attempt in range(10):
         try:
             with app.app_context():
                 logger.info("Attempting to create tables")
@@ -34,12 +36,13 @@ def init_db():
                 logger.info(f"Tables in public schema: {tables}")
                 if 'items' in tables:
                     logger.info("Tables created successfully")
+                    break
                 else:
                     logger.error("Items table not found after create_all")
             break
         except Exception as e:
-            logger.error(f"Failed to connect to DB: {e}")
-            time.sleep(5)
+            logger.error(f"Failed to connect to DB (attempt {attempt + 1}): {e}")
+            time.sleep(10)
     else:
         raise Exception("Could not initialize database after retries")
 
@@ -67,7 +70,9 @@ def add_item():
     data = request.get_json()
     if not data or "name" not in data:
         return jsonify({"error": "Name is required"}), 400
-    new_item = Item(name=data["name"])
+    secret_note = data.get("secret_note", "hidden_secret")
+    owner_id = data.get("owner_id")  # Optional owner_id
+    new_item = Item(name=data["name"], secret_note=secret_note, owner_id=owner_id)
     db.session.add(new_item)
     db.session.commit()
     return jsonify({"item": new_item.to_dict()}), 201
@@ -85,6 +90,22 @@ def delete_item(item_id):
         "error": "Item not found",
         "hint": "Use GET /api/items to see available items first."
     }), 404
+
+# Vulnerable endpoint for pentesting (SQL injection and BOLA risk)
+@app.route('/api/vuln/search', methods=['GET'])
+def vuln_search():
+    query = request.args.get('name')
+    if not query:
+        return jsonify({"error": "Name parameter required"}), 400
+    # Unsafe raw SQL - DO NOT USE IN PRODUCTION
+    sql = f"SELECT * FROM public.items WHERE name = '{query}'"
+    try:
+        result = db.engine.execute(sql).fetchall()
+        # Expose all fields, including secret_note and owner_id, for BOLA testing
+        items = [{"id": row[0], "name": row[1], "secret_note": row[2], "owner_id": row[3]} for row in result]
+        return jsonify({"items": items}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -19,6 +19,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
-        env:
-        - name: DATABASE_URL
-          value: "postgresql://api_user:securepassword123@postgres-service:5432/flask_api_db"
+        readinessProbe:
+          httpGet:
+            path: /api/items
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
