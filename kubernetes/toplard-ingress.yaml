@@ -37,13 +37,3 @@ spec:
                 name: toplard
                 port:
                   number: 80
- #   - host: topman.servebeer.com
- #     http:
- #       paths:
- #         - pathType: Prefix
- #           path: /
- #           backend:
- #             service:
- #               name: topman
- #               port:
- #                 number: 80
